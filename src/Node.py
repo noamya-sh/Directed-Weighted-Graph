@@ -3,15 +3,22 @@ from location import location
 
 class Node:
     def __init__(self, pos: str, id:int):
-        self.id = id
-        self.pos = location(pos)#location(pos)
-        self.out = {}
-        self.enter = {}
+        self._id = id
+        self._pos = location(pos)#location(pos)
+        self._out = {}
+        self._enter = {}
+
+    def get_id(self):
+        return self._id
+    def get_pos(self):
+        return self._pos
+    def get_out(self):
+        return self._out
     def asdict(self):
-        return {"pos":str(self.pos.x)+","+str(self.pos.y)+","+str(self.pos.z),"id":self.id}
+        return {"pos":str(self._pos.x)+","+str(self._pos.y)+","+str(self._pos.z),"id":self._id}
     def __iter__(self):
-        return self.out.values().__iter__()
+        return self._out.values().__iter__()
     def __repr__(self):
-        return {"pos":str(self.pos),"id":self.id}.__repr__()
+        return {"pos":str(self._pos),"id":self._id}.__repr__()
     # def __str__(self):
     #     return "pos:" + self.pos + "," + "id:" + self.id
