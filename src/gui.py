@@ -1,6 +1,6 @@
 import math
 import pygame as pg
-from pygame import Color, display, gfxdraw
+from pygame import Color, display, gfxdraw, Rect
 from pygame.constants import RESIZABLE
 
 # init pg
@@ -84,6 +84,18 @@ def arrow(screen, tricolor, start, end, trirad):
                                        (end[0] + trirad * math.sin(rotation + 120 * rad),
                                         end[1] + trirad * math.cos(rotation + 120 * rad))))
 
+def button(x, y, w, h, inactive=None, active=None, action=None):
+    mouse = pg.mouse.get_pos()
+    click = pg.mouse.get_pressed()
+
+    pg.draw.rect(screen, Color(22, 225, 255), (x, y, x + w, y + h))
+    # screen.blit()
+    # if x + w > mouse[0] > x and y + h > mouse[1] > y:
+    #     screen.blit(pg.Rect(x,y,w,h))
+    #     if click[0] == 1 and action is not None:
+    #         action()
+    # else:
+    #     screen.blit(inactive, (x, y))
 
 while (True):
     # check events
@@ -125,7 +137,7 @@ while (True):
 
         # draw the line
         p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
-        arrow(screen, Color(20, 50, 80), Color(0, 0, 0), (src_x, src_y), p, 10)
+        arrow(screen, Color(0, 0, 0), (src_x, src_y), p, 10)
     # draw nodes
     for n in graph.dicNodes.values():
         x = my_scale(n.pos.x, x=True)
@@ -141,7 +153,7 @@ while (True):
         id_srf = FONT.render(str(n.id), True, Color(0, 0, 0))
         rect = id_srf.get_rect(center=(x, y))
         screen.blit(id_srf, rect)
-
+    # button(0, HEIGHT-50, 80, 50)
     # update screen changes
     display.update()
 

@@ -1,3 +1,6 @@
+import math
+import heapq
+
 from src import *
 from typing import List
 
@@ -45,13 +48,60 @@ class GraphAlgo(GraphAlgoInterface):
             return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
-        pass
+        return self.dijkstra(id1, id2)
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         pass
 
     def centerPoint(self) -> (int, float):
+        dist = math.inf
+        ans = None
+        for v in self._graph.get_all_v():
+            pass
         pass
 
     def plot_graph(self) -> None:
+        pass
+
+    def dijkstra(self, src: int, dest: int = None):
+        prev = {i.id: None for i in self._graph.get_all_v()}
+
+        dist = {i.id: math.inf for i in self._graph.get_all_v()}
+        dist[src] = 0
+        queue = [self._graph.dicNodes.get(src)]
+        while queue:
+            v = queue[0]
+            queue.remove(v)
+            if dest != None and v.id == dest:
+                d = dist[v.id]
+                path = []
+                if prev[v.id] != None or v.id == src:
+                    while prev[v.id] != None:
+                        path.insert(0, v)
+                        v = prev[v.id]
+                path.insert(0, self._graph.dicNodes.get(src))
+                return (d, path)
+
+            for i in v:
+                alt = dist[v.id] + i.w
+                if alt < dist[i.dest]:
+                    dist[i.dest] = alt
+                    prev[i.dest] = v
+                    queue.append(self._graph.dicNodes.get(i.dest))
+                    queue.sort(key=lambda x: dist[x.id])
+        if dest == None:
+            return max(dist,key=dist.values())
+
+        return (math.inf, [])
+
+
+if __name__ == '__main__':
+    g = GraphAlgo()
+    g.load_from_json("A1.json")
+    edges =g.get_graph().dicEdges
+    print(max(edges,key=lambda x: edges.get(x).w))
+    print(g.dijkstra(4, 10))
+
+class dijkstra:
+    def __init__(self):
         pass
