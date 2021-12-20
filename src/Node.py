@@ -4,14 +4,14 @@ from location import location
 class Node:
     def __init__(self, pos: str, id:int):
         self.id = id
-        self.pos = location(pos)
+        self.pos = location(pos)#location(pos)
         self.out = {}
         self.enter = {}
     def asdict(self):
-        return {"pos":self.pos,"id":self.id}
+        return {"pos":str(self.pos.x)+","+str(self.pos.y)+","+str(self.pos.z),"id":self.id}
     def __iter__(self):
         return self.out.values().__iter__()
     def __repr__(self):
         return {"pos":str(self.pos),"id":self.id}.__repr__()
-    def __str__(self):
-        return "pos:" + self.pos + "," + "id:" + self.id
+    # def __str__(self):
+    #     return "pos:" + self.pos + "," + "id:" + self.id
