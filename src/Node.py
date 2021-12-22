@@ -22,5 +22,4 @@ class Node:
         return self._out.values().__iter__()
     def __repr__(self):
         return {"pos":str(self._pos),"id":self._id}.__repr__()
-    # def __str__(self):
-    #     return "pos:" + self.pos + "," + "id:" + self.id
+

@@ -159,5 +159,4 @@ if __name__ == '__main__':
     g.load_from_json("./data/A5.json")
     print(g.centerPoint())
     print(g._isConnected())
-    g.save_to_json("test.json")
-    g.plot_graph()
+

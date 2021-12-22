@@ -43,7 +43,6 @@ class DiGraph(GraphInterface):
         return True
 
     def add_node(self, node_id: int, pos: str = None) -> bool:
-        # l = pos(pos)
         n = Node(pos=pos, id=node_id)
         self._dicNodes[node_id] = n
         self._MC += 1
