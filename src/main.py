@@ -52,7 +52,7 @@ def check1():
     :return:
     """
     g_algo = GraphAlgo()  # init an empty graph - for the GraphAlgo
-    file = "src/data/T0.json"
+    file = 'src/data/T0.json'
     g_algo.load_from_json(file)  # init a GraphAlgo from a json file
     print(g_algo.shortest_path(0, 3))
     print(g_algo.shortest_path(3, 1))
@@ -66,7 +66,7 @@ def check2():
       :return:
       """
     g_algo = GraphAlgo()
-    file = 'data/A5.json'
+    file = 'src/data/A5.json'
     g_algo.load_from_json(file)
     g_algo.get_graph().remove_edge(13, 14)
     g_algo.save_to_json(file + "_edited")
@@ -79,7 +79,7 @@ def check2():
     dist, path = g_algo.shortest_path(2, 20)
     print(dist, path)
     print(g_algo.TSP([1, 2, 3]))
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
 
 
 def check3():
@@ -99,7 +99,6 @@ def check3():
     g.add_edge(4, 2, .5)
     g_algo = GraphAlgo(g)
     print(g_algo.centerPoint())
-    print(66)
     print(g_algo.TSP([1, 2, 4]))
     # g_algo.plot_graph()
 
