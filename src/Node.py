@@ -2,7 +2,7 @@ from location import location
 
 
 class Node:
-    def __init__(self, pos: str, id:int):
+    def __init__(self, id:int, pos: str=None):
         self._id = id
         self._pos = location(pos)#location(pos)
         self._out = {}
@@ -14,6 +14,8 @@ class Node:
         return self._pos
     def get_out(self):
         return self._out
+    def get_enter(self):
+        return self._enter
     def asdict(self):
         return {"pos":str(self._pos.x)+","+str(self._pos.y)+","+str(self._pos.z),"id":self._id}
     def __iter__(self):

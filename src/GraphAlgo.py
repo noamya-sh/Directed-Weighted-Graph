@@ -50,10 +50,12 @@ class GraphAlgo(GraphAlgoInterface):
         n = temp[0]
         ans = [n]
         temp.remove(n)
-
+        num = 0
         while len(temp) >= 1:
             dist, prev = self._dijkstra(n)
-            t = min(dist, key=dist.get)
+            new_dist = {k:v for k,v in dist.items() if k in temp}
+            t = min(new_dist, key=new_dist.get)
+            num += new_dist[t]
             if t is None:
                 return None, math.inf
             f = t
@@ -61,12 +63,12 @@ class GraphAlgo(GraphAlgoInterface):
             if prev[t] is not None or t == n:
                 while prev[t]:
                     path.insert(0, t)
-                    t = prev[t]
+                    t = prev[t].get_id()
             n = f
             temp.remove(f)
             ans += path
 
-        return ans
+        return ans,num
 
     def _isConnected(self):
         graph = self._graph
@@ -119,14 +121,14 @@ class GraphAlgo(GraphAlgoInterface):
             v = queue[0]
             queue.remove(v)
 
-            if dest is not None and v.id == dest:
+            if dest is not None and v.get_id() == dest:
                 d = dist[v.get_id()]
                 path = []
                 if prev[v.get_id()] is not None or v.get_id() == src:
                     while prev[v.get_id()] is not None:
-                        path.insert(0, v.id)
+                        path.insert(0, v.get_id())
                         v = prev[v.get_id()]
-                path.insert(0, self._graph.get_dicNodes().get(src))
+                path.insert(0, src)
                 return d, path
 
             for i in v:

@@ -3,7 +3,7 @@ import pygame as pg
 from pygame import Color, display, gfxdraw, Rect
 from pygame.constants import RESIZABLE
 from pygame.examples.joystick import BLACK
-
+from GraphAlgoInterface import *
 from GraphAlgo import *
 import numpy as np
 # init pg

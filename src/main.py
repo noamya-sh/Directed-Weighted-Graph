@@ -22,7 +22,6 @@ def check():
     check1()
     check2()
 
-
 def check0():
     """
     This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
@@ -44,7 +43,7 @@ def check0():
     print(g.all_out_edges_of_node(1))
     g_algo = GraphAlgo(g)
     print(g_algo.shortest_path(0, 3))
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
 
 
 def check1():
@@ -53,13 +52,13 @@ def check1():
     :return:
     """
     g_algo = GraphAlgo()  # init an empty graph - for the GraphAlgo
-    file = "data/T0.json"
+    file = "src/data/T0.json"
     g_algo.load_from_json(file)  # init a GraphAlgo from a json file
     print(g_algo.shortest_path(0, 3))
     print(g_algo.shortest_path(3, 1))
     print(g_algo.centerPoint())
     g_algo.save_to_json(file + '_saved')
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
 
 
 def check2():
@@ -100,8 +99,9 @@ def check3():
     g.add_edge(4, 2, .5)
     g_algo = GraphAlgo(g)
     print(g_algo.centerPoint())
+    print(66)
     print(g_algo.TSP([1, 2, 4]))
-    g_algo.plot_graph()
+    # g_algo.plot_graph()
 
 
 if __name__ == '__main__':
