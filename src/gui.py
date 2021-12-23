@@ -6,6 +6,7 @@ from pygame.examples.joystick import BLACK
 from GraphAlgoInterface import *
 from GraphAlgo import *
 import numpy as np
+import pygame_gui as pgg
 # init pg
 from src.GraphAlgo import GraphAlgo
 
@@ -15,11 +16,16 @@ class gui:
         self.graphAlgo = graphAlgo
         WIDTH, HEIGHT = 1080, 720
         self.screen = display.set_mode((WIDTH, HEIGHT), depth=32, flags=RESIZABLE)
+        manager = pgg.UIManager((WIDTH, HEIGHT))
+        hello_button = pgg.elements.UIButton(relative_rect=pg.Rect((0, 0), (100, 50)),
+                                             text='Center Point',manager=manager)
+        hello_button.colours.update({"normal_bg":"#25292e"})
+        clock = pg.time.Clock()
         while True:
             pg.init()
-            clock = pg.time.Clock()
-            pg.font.init()
 
+            pg.font.init()
+            time_delta = clock.tick(60)
             FONT = pg.font.SysFont('Arial', 20, bold=True)
             # check events
             for event in pg.event.get():
@@ -28,50 +34,50 @@ class gui:
                     exit(0)
 
             # refresh screen
-            self.screen.fill(Color(51, 25, 0))
+            self.screen.fill(Color("#513506"))
 
             graph = self.graphAlgo.get_graph()
             # get data proportions
-            self.min_x = min(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos().x).get_pos().x
-            self.min_y = min(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos().y).get_pos().y
-            self.max_x = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos().x).get_pos().x
-            self.max_y = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos().y).get_pos().y
+            self.min_x = min(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[0]).get_pos()[0]
+            self.min_y = min(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[1]).get_pos()[1]
+            self.max_x = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[0]).get_pos()[0]
+            self.max_y = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[1]).get_pos()[1]
 
             # draw edges
-            for e in graph.get_dicEdges().values():
+            for k in graph.get_dicEdges().keys():
                 # find the edge nodes
-                src = next(n for n in graph.get_dicNodes().values() if n.get_id() == e.get_src())
-                dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == e.get_dest())
+                src = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[0])
+                dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[1])
 
                 # scaled positions
-                src_x = self.my_scale(src.get_pos().x, x=True)
-                src_y = self.my_scale(src.get_pos().y, y=True)
-                dest_x = self.my_scale(dest.get_pos().x, x=True)
-                dest_y = self.my_scale(dest.get_pos().y, y=True)
+                src_x = self.my_scale(src.get_pos()[0], x=True)
+                src_y = self.my_scale(src.get_pos()[1], y=True)
+                dest_x = self.my_scale(dest.get_pos()[0], x=True)
+                dest_y = self.my_scale(dest.get_pos()[1], y=True)
 
                 # draw the line
                 p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
-                line(self.screen, Color(153, 153, 0), (src_x, src_y), p)
+                line(self.screen, Color("#2B1B01"), (src_x, src_y), p)
                 # pg.draw.line(screen, Color(153, 153, 0),
                 #                  (src_x, src_y), (dest_x, dest_y), width=4)
-            for e in graph.get_dicEdges().values():
+            for k in graph.get_dicEdges().keys():
                 # find the edge nodes
-                src = next(n for n in graph.get_dicNodes().values() if n.get_id() == e.get_src())
-                dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == e.get_dest())
+                src = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[0])
+                dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[1])
 
                 # scaled positions
-                src_x = self.my_scale(src.get_pos().x, x=True)
-                src_y = self.my_scale(src.get_pos().y, y=True)
-                dest_x = self.my_scale(dest.get_pos().x, x=True)
-                dest_y = self.my_scale(dest.get_pos().y, y=True)
+                src_x = self.my_scale(src.get_pos()[0], x=True)
+                src_y = self.my_scale(src.get_pos()[1], y=True)
+                dest_x = self.my_scale(dest.get_pos()[0], x=True)
+                dest_y = self.my_scale(dest.get_pos()[1], y=True)
 
                 # draw the line
                 p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
-                arrow(self.screen, Color(0, 0, 0), (src_x, src_y), p, 10)
+                arrow(self.screen, Color("#003300"), (src_x, src_y), p, 10)
             # draw nodes
             for n in graph.get_dicNodes().values():
-                x = self.my_scale(n.get_pos().x, x=True)
-                y = self.my_scale(n.get_pos().y, y=True)
+                x = self.my_scale(n.get_pos()[0], x=True)
+                y = self.my_scale(n.get_pos()[1], y=True)
 
                 # its just to get a nice antialiased circle
                 gfxdraw.filled_circle(self.screen, int(x), int(y),
@@ -85,9 +91,11 @@ class gui:
                 self.screen.blit(id_srf, rect)
             # button(0, HEIGHT-50, 80, 50)
             # update screen changes
-            display.update()
 
+            manager.update(time_delta)
+            manager.draw_ui(self.screen)
             # refresh rate
+            display.update()
             clock.tick(60)
 
     def my_scale(self, data, x=False, y=False):

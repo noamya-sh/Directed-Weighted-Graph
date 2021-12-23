@@ -1,7 +1,5 @@
 from GraphInterface import *
-from Edge import *
 from Node import *
-from location import *
 
 
 class DiGraph(GraphInterface):
@@ -13,7 +11,7 @@ class DiGraph(GraphInterface):
     def get_dicEdges(self) -> dict:
         return self._dicEdges
 
-    def get_dicNodes(self)->dict:
+    def get_dicNodes(self) -> dict:
         return self._dicNodes
 
     def v_size(self) -> int:
@@ -26,24 +24,28 @@ class DiGraph(GraphInterface):
         return self._MC
 
     def get_all_v(self) -> dict:
-        return self._dicNodes.values()
+        return self._dicNodes
 
     def all_in_edges_of_node(self, id1: int) -> dict:
-        return dict([(k[0], v.get_w()) for k, v in self._dicEdges.items() if k[1] == id1])
+        # return dict([(k[0], v.get_w()) for k, v in self._dicEdges.items() if k[1] == id1])
+        return self.get_all_v().get(id1).get_enter()
 
     def all_out_edges_of_node(self, id1: int) -> dict:
-        return dict([(k[1], v.get_w()) for k, v in self._dicEdges.items() if k[0] == id1])
+        # return dict([(k[1], v.get_w()) for k, v in self._dicEdges.items() if k[0] == id1])
+        return self.get_all_v().get(id1).get_out()
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
-        e = Edge(id1, id2, weight)
-        self._dicEdges[(id1, id2)] = e
-        self._dicNodes.get(id1)._out[id2] = e
-        self._dicNodes.get(id2)._enter[id1] = id2
+        self._dicEdges[(id1, id2)] = weight
+        self._dicNodes.get(id1).get_out()[id2] = weight
+        self._dicNodes.get(id2).get_enter()[id1] = weight
         self._MC += 1
         return True
 
-    def add_node(self, node_id: int, pos: str = None) -> bool:
-        n = Node(pos=pos, id=node_id)
+    def add_node(self, node_id: int, pos: tuple = None) -> bool:
+        if pos:
+            n = Node(pos=",".join([str(v) for v in pos]), id=node_id)
+        else:
+            n = Node(pos=pos, id=node_id)
         self._dicNodes[node_id] = n
         self._MC += 1
         return True
@@ -69,4 +71,4 @@ class DiGraph(GraphInterface):
         return True
 
     def __repr__(self):
-        return f"Graph: |V|={self.v_size()}, |E|=:{len(self._dicEdges)}"
+        return f"Graph: |V|={self.v_size()}, |E|={len(self._dicEdges)}"

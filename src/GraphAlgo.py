@@ -1,10 +1,12 @@
+import math
+from queue import PriorityQueue
+
 from gui import *
 from typing import List
 from DiGraph import DiGraph
 from GraphAlgoInterface import GraphAlgoInterface
 from GraphInterface import GraphInterface
 from Node import Node
-from Edge import Edge
 import json
 
 
@@ -31,14 +33,15 @@ class GraphAlgo(GraphAlgoInterface):
         return False
 
     def _toJson(self, object):
-        if type(object) == Node or type(object) == Edge:
+        if type(object) == Node:
             return object.asdict()
         else:
             return object.__dict__
 
     def save_to_json(self, file_name: str) -> bool:
         with open(file_name, 'w') as file:
-            dic = {'Edges': list(self._graph.get_dicEdges().values()), 'Nodes': list(self._graph.get_all_v())}
+            dic = {'Edges': [{'src': k[0], 'w': v, 'dest': k[1]} for k, v in self._graph.get_dicEdges().items()],
+                   'Nodes': list(self._graph.get_all_v().values())}
             json.dump(dic, file, default=self._toJson, indent=2)
             return True
 
@@ -53,7 +56,7 @@ class GraphAlgo(GraphAlgoInterface):
         num = 0
         while len(temp) >= 1:
             dist, prev = self._dijkstra(n)
-            new_dist = {k:v for k,v in dist.items() if k in temp}
+            new_dist = {k: v for k, v in dist.items() if k in temp}
             t = min(new_dist, key=new_dist.get)
             num += new_dist[t]
             if t is None:
@@ -68,12 +71,12 @@ class GraphAlgo(GraphAlgoInterface):
             temp.remove(f)
             ans += path
 
-        return ans,num
+        return ans, num
 
     def _isConnected(self):
         graph = self._graph
-        test = {i.get_id(): False for i in graph.get_all_v()}
-        test2 = {i.get_id(): False for i in graph.get_all_v()}
+        test = {i.get_id(): False for i in graph.get_all_v().values()}
+        test2 = {i.get_id(): False for i in graph.get_all_v().values()}
         first = next(iter(test))
         test[first] = True
         queue = [first]
@@ -101,7 +104,7 @@ class GraphAlgo(GraphAlgoInterface):
             return -1, math.inf
         minMax = math.inf
         ans = None
-        for v in self._graph.get_all_v():
+        for v in self._graph.get_all_v().values():
             dist, prev = self._dijkstra(v.get_id())
             temp = dist[max(dist, key=dist.get)]
             if temp < minMax:
@@ -113,8 +116,8 @@ class GraphAlgo(GraphAlgoInterface):
         gui(self)
 
     def _dijkstra(self, src: int, dest: int = None):
-        prev = {i.get_id(): None for i in self._graph.get_all_v()}
-        dist = {i.get_id(): math.inf for i in self._graph.get_all_v()}
+        prev = {i.get_id(): None for i in self._graph.get_all_v().values()}
+        dist = {i.get_id(): math.inf for i in self._graph.get_all_v().values()}
         dist[src] = 0
         queue = [self._graph.get_dicNodes().get(src)]
         while queue:
@@ -131,12 +134,12 @@ class GraphAlgo(GraphAlgoInterface):
                 path.insert(0, src)
                 return d, path
 
-            for i in v:
-                alt = dist[v.get_id()] + i.get_w()
-                if alt < dist[i.get_dest()]:
-                    dist[i.get_dest()] = alt
-                    prev[i.get_dest()] = v
-                    queue.append(self._graph.get_dicNodes().get(i.get_dest()))
+            for i, w in v:
+                alt = dist[v.get_id()] + w
+                if alt < dist[i]:
+                    dist[i] = alt
+                    prev[i] = v
+                    queue.append(self._graph.get_dicNodes().get(i))
                     queue.sort(key=lambda x: dist[x.get_id()])
 
         if dest is None:
@@ -148,8 +151,8 @@ class GraphAlgo(GraphAlgoInterface):
 if __name__ == '__main__':
     g = GraphAlgo()
     g.load_from_json("./data/A0.json")
-    edges = g.get_graph().get_dicEdges()
-    print(max(edges, key=lambda x: edges.get(x).get_w()))
+    # edges = g.get_graph().get_dicEdges()
+    # print(max(edges, key=lambda x: edges.get(x).get_w()))
     g.save_to_json("test.json")
     print(g.centerPoint())
     g.load_from_json("./data/A1.json")
@@ -159,4 +162,3 @@ if __name__ == '__main__':
     g.load_from_json("./data/A5.json")
     print(g.centerPoint())
     print(g._isConnected())
-

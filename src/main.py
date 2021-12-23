@@ -21,12 +21,16 @@ def check():
     check0()
     check1()
     check2()
+    check3()
 
 def check0():
     """
     This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
     :return:
     """
+    # ga = GraphAlgo()
+    # ga.load_from_json("src/data/10000Nodes.json")
+    # print(ga.centerPoint())
     g = DiGraph()  # creates an empty directed graph
     for n in range(4):
         g.add_node(n)
@@ -43,7 +47,7 @@ def check0():
     print(g.all_out_edges_of_node(1))
     g_algo = GraphAlgo(g)
     print(g_algo.shortest_path(0, 3))
-    # g_algo.plot_graph()
+    # # g_algo.plot_graph()
 
 
 def check1():
@@ -79,7 +83,7 @@ def check2():
     dist, path = g_algo.shortest_path(2, 20)
     print(dist, path)
     print(g_algo.TSP([1, 2, 3]))
-    # g_algo.plot_graph()
+    g_algo.plot_graph()
 
 
 def check3():
@@ -98,7 +102,8 @@ def check3():
     g.add_edge(3, 4, 2.1)
     g.add_edge(4, 2, .5)
     g_algo = GraphAlgo(g)
-    print(g_algo.centerPoint())
+    c = g_algo.centerPoint()
+    print(c)
     print(g_algo.TSP([1, 2, 4]))
     # g_algo.plot_graph()
 
