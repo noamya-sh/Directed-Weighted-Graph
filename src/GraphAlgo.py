@@ -1,5 +1,8 @@
 import math
+import time
 from queue import PriorityQueue
+
+from heapdict import heapdict
 
 from gui import *
 from typing import List
@@ -100,17 +103,22 @@ class GraphAlgo(GraphAlgoInterface):
         return all(v == True for v in test.values()) and all(v == True for v in test2.values())
 
     def centerPoint(self) -> (int, float):
+        start = time.time()
         if not self._isConnected():
             return -1, math.inf
-        minMax = math.inf
+        min_max = math.inf
         ans = None
         for v in self._graph.get_all_v().values():
+            start = time.time()
             dist, prev = self._dijkstra(v.get_id())
             temp = dist[max(dist, key=dist.get)]
-            if temp < minMax:
+
+            if temp < min_max:
                 ans = v.get_id()
-                minMax = temp
-        return ans, minMax
+                min_max = temp
+            end = time.time()
+            print(v, end - start)
+        return ans, min_max
 
     def plot_graph(self) -> None:
         gui(self)
@@ -118,12 +126,16 @@ class GraphAlgo(GraphAlgoInterface):
     def _dijkstra(self, src: int, dest: int = None):
         prev = {i.get_id(): None for i in self._graph.get_all_v().values()}
         dist = {i.get_id(): math.inf for i in self._graph.get_all_v().values()}
+        vis = {i.get_id(): False for i in self._graph.get_all_v().values()}
         dist[src] = 0
-        queue = [self._graph.get_dicNodes().get(src)]
-        while queue:
-            v = queue[0]
-            queue.remove(v)
-
+        # queue = [self._graph.get_dicNodes().get(src)]
+        hd = heapdict()
+        hd[self._graph.get_dicNodes().get(src)] = 0
+        # pq = PriorityQueue()
+        # pq.put((0, self._graph.get_dicNodes().get(src)))
+        while hd:
+            v, p = hd.popitem()  # pq.get()
+            vis[v.get_id()] = True
             if dest is not None and v.get_id() == dest:
                 d = dist[v.get_id()]
                 path = []
@@ -135,12 +147,16 @@ class GraphAlgo(GraphAlgoInterface):
                 return d, path
 
             for i, w in v:
+                if vis[i]:
+                    continue
                 alt = dist[v.get_id()] + w
                 if alt < dist[i]:
+                    hd[self._graph.get_dicNodes().get(i)] = alt
                     dist[i] = alt
                     prev[i] = v
-                    queue.append(self._graph.get_dicNodes().get(i))
-                    queue.sort(key=lambda x: dist[x.get_id()])
+                    # pq.put((alt, self._graph.get_dicNodes().get(i)))
+                    # queue.append(self._graph.get_dicNodes().get(i))
+                    # queue.sort(key=lambda x: dist[x.get_id()])
 
         if dest is None:
             return dist, prev

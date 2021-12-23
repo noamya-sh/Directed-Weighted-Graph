@@ -28,9 +28,9 @@ def check0():
     This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
     :return:
     """
-    # ga = GraphAlgo()
-    # ga.load_from_json("src/data/10000Nodes.json")
-    # print(ga.centerPoint())
+    ga = GraphAlgo()
+    ga.load_from_json("src/data/10000Nodes.json")
+    print(ga.centerPoint())
     g = DiGraph()  # creates an empty directed graph
     for n in range(4):
         g.add_node(n)
@@ -107,6 +107,19 @@ def check3():
     print(g_algo.TSP([1, 2, 4]))
     # g_algo.plot_graph()
 
+def ch():
+    g = DiGraph()
+    g.add_node(5)
+    g.add_node(2)
+    g.add_node(3)
+    g.add_node(4)
+    g.add_edge(5, 2, 6)
+    g.add_edge(2, 3, 7)
+    g.add_edge(5, 4, 7)
+    g.add_edge(4, 3, 2)
+    g_algo = GraphAlgo(g)
+    print(g_algo.shortest_path(5,3))
+    print(g_algo.centerPoint())
 
 if __name__ == '__main__':
-    check()
+    ch()
