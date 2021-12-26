@@ -31,4 +31,4 @@ class Node:
         return self._out.items().__iter__()
 
     def __repr__(self):
-        return {"pos": ",".join([str(v) for v in self._pos]), "id": self._id}.__repr__()
+        return str(self._id)+": |edges out| "+str(len(self._out))+" |edges in| "+str(len(self._enter))

@@ -17,7 +17,10 @@ from gui import *
 
 class GraphAlgo(GraphAlgoInterface):
     def __init__(self, graph: GraphInterface = None):
-        self._graph = graph
+        if graph is None:
+            self._graph = DiGraph()
+        else:
+            self._graph = graph
 
     def get_graph(self) -> GraphInterface:
         return self._graph
@@ -143,7 +146,7 @@ class GraphAlgo(GraphAlgoInterface):
 
     def centerPoint(self) -> (int, float):
         if not self._isConnected():
-            return -1, math.inf
+            return None, math.inf
         minMax = math.inf
         ans = None
         for v in self._graph.get_all_v().values():

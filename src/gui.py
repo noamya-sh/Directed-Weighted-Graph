@@ -176,7 +176,11 @@ class gui:
         filrChooser.withdraw()
         file = askopenfilename(filetypes=[("json", "*.json")])
         try:
-            self.graphAlgo.load_from_json(file)
+
+            newGraph = GraphAlgo()
+            newGraph.load_from_json(file)
+            self.graphAlgo = newGraph
+
         except:
             return
 
@@ -213,7 +217,7 @@ class gui:
                                                                              pady=10)
         g = tk.StringVar()
         dest = ttk.Combobox(window, width=10, textvariable=g)
-        src['state'] = 'readonly'
+        dest['state'] = 'readonly'
         cur = []
         dest['values'] = cur
         dest.grid(column=2, row=8, pady=(10, 2), padx=(20, 0))
@@ -238,6 +242,7 @@ class gui:
             path, dis = self.graphAlgo.TSP(cur)
             self.TSP = path
             window.destroy()
+            self.drawPath(self.SP)
 
         find = tk.Button(window, text="Find", bg='yellow', command=checkcmbo)
         find.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
@@ -281,6 +286,7 @@ class gui:
         b.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
 
+
     def update(self):
         self.SP = None
         self.TSP = None
@@ -293,19 +299,6 @@ def scale(data, min_screen, max_screen, min_data, max_data):
     relative to min and max screen dimensions
     """
     return ((data - min_data) / (max_data - min_data)) * (max_screen - min_screen) + min_screen
-
-
-# # get the current directory path
-# root_path = os.path.dirname(os.path.abspath(__file__))
-#
-# # load the json file into SimpleNamespace Object
-# with open(root_path + '/graph_triangle.json', 'r') as file:
-#     graph = json.load(
-#         file, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
-
-
-# decorate scale with the correct values
-
 
 radius = 15
 
@@ -337,165 +330,3 @@ def arrow(screen, tricolor, start, end, trirad):
                                        (end[0] + trirad * math.sin(rotation + 120 * rad),
                                         end[1] + trirad * math.cos(rotation + 120 * rad))))
 
-#
-# def button(screen, x, y, w, h, inactive=None, active=None, action=None):
-#     mouse = pg.mouse.get_pos()
-#     click = pg.mouse.get_pressed()
-#
-#     pg.draw.rect(screen, Color(22, 225, 255), (x, y, x + w, y + h))
-# screen.blit()
-# if x + w > mouse[0] > x and y + h > mouse[1] > y:
-#     screen.blit(pg.Rect(x,y,w,h))
-#     if click[0] == 1 and action is not None:
-#         action()
-# else:
-#     screen.blit(inactive, (x, y))
-# WHITE = (255, 255, 255)
-# BLACK = (0, 0, 0)
-# RED = (255, 0, 0)
-# GREEN = (0, 255, 0)
-# BLUE = (0, 0, 255)
-# YELLOW = (255, 255, 0)
-# class menu():
-#     def __init__(self):
-#         pg.init()
-#         screen = pg.display.set_mode((800, 600))
-#         screen_rect = screen.get_rect()
-#
-#         # - objects -
-#
-#         stage = 'menu'
-#
-#         button_1 = self.button_create("GAME", (300, 100, 200, 75), RED, GREEN, self.on_click_button_1)
-#         button_2 = self.button_create("OPTIONS", (300, 200, 200, 75), RED, GREEN, self.on_click_button_2)
-#         button_3 = self.button_create("EXIT", (300, 300, 200, 75), RED, GREEN, self.on_click_button_3)
-#
-#         button_return = self.button_create("RETURN", (300, 400, 200, 75), RED, GREEN, self.on_click_button_return)
-#         running = True
-# jjjjj
-#         while running:
-#
-#             # - events -
-#
-#             for event in pg.event.get():
-#                 if event.type == pg.QUIT:
-#                     running = False
-#
-#                 if stage == 'menu':
-#                     self.button_check(button_1, event)
-#                     self.button_check(button_2, event)
-#                     self.button_check(button_3, event)
-#                 elif stage == 'game':
-#                     self.button_check(button_return, event)
-#                 elif stage == 'options':
-#                     self.button_check(button_return, event)
-#                 # elif stage == 'exit':
-#                 #    pass
-#
-#             # - draws -
-#
-#             screen.fill(BLACK)
-#
-#             if stage == 'menu':
-#                 self.button_draw(screen, button_1)
-#                 self.button_draw(screen, button_2)
-#                 self.button_draw(screen, button_3)
-#             elif stage == 'game':
-#                 self.button_draw(screen, button_return)
-#             elif stage == 'options':
-#                 self.button_draw(screen, button_return)
-#             elif stage == 'exit':
-#                 running = False
-#                 pg.display.E
-#
-#             pg.display.update()
-#     WHITE = (255, 255, 255)
-#     BLACK = (0, 0, 0)
-#
-#     RED = (255, 0, 0)
-#     GREEN = (0, 255, 0)
-#     BLUE = (0, 0, 255)
-#
-#     YELLOW = (255, 255, 0)
-#
-#     # --- classes --- (CamelCaseNanes)
-#
-#     # empty
-#
-#     # --- functions --- (lower_case_names_
-#
-#     def button_create(self,text, rect, inactive_color, active_color, action):
-#
-#         font = pg.font.Font(None, 40)
-#
-#         button_rect = pg.Rect(rect)
-#
-#         text = font.render(text, True, BLACK)
-#         text_rect = text.get_rect(center=button_rect.center)
-#
-#         return [text, text_rect, button_rect, inactive_color, active_color, action, False]
-#
-#     def button_check(self,info, event):
-#
-#         text, text_rect, rect, inactive_color, active_color, action, hover = info
-#
-#         if event.type == pg.MOUSEMOTION:
-#             # hover = True/False
-#             info[-1] = rect.collidepoint(event.pos)
-#
-#         elif event.type == pg.MOUSEBUTTONDOWN:
-#             if hover and action:
-#                 action()
-#
-#     def button_draw(self,screen, info):
-#
-#         text, text_rect, rect, inactive_color, active_color, action, hover = info
-#
-#         if hover:
-#             color = active_color
-#         else:
-#             color = inactive_color
-#
-#         pg.draw.rect(screen, color, rect)
-#         screen.blit(text, text_rect)
-#
-#     # ---
-#
-#     def on_click_button_1(self):
-#         global stage
-#         stage = 'game'
-#
-#         print('You clicked Button 1')
-#
-#     def on_click_button_2(self):
-#         global stage
-#         stage = 'options'
-#
-#         print('You clicked Button 2')
-#
-#     def on_click_button_3(self):
-#         global stage
-#         global running
-#
-#         stage = 'exit'
-#         running = False
-#
-#         pg.quit()
-#         exit(0)
-#         print('You clicked Button 3')
-#
-#     def on_click_button_return(self):
-#         global stage
-#         stage = 'menu'
-#
-#         print('You clicked Button Return')
-#
-#     # --- main ---  (lower_case_names)
-#
-#     # - init -
-#
-#
-#
-#     # - mainloop -
-#
-#
