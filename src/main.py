@@ -23,14 +23,15 @@ def check():
     check2()
     check3()
 
+
 def check0():
     """
     This function tests the naming (main methods of the DiGraph class, as defined in GraphInterface.
     :return:
     """
-    ga = GraphAlgo()
-    ga.load_from_json("src/data/10000Nodes.json")
-    print(ga.centerPoint())
+    # ga = GraphAlgo()
+    # ga.load_from_json("src/data/10000Nodes.json")
+    # print(ga.centerPoint())
     g = DiGraph()  # creates an empty directed graph
     for n in range(4):
         g.add_node(n)
@@ -47,7 +48,7 @@ def check0():
     print(g.all_out_edges_of_node(1))
     g_algo = GraphAlgo(g)
     print(g_algo.shortest_path(0, 3))
-    # # g_algo.plot_graph()
+    # g_algo.plot_graph()
 
 
 def check1():
@@ -70,8 +71,9 @@ def check2():
       :return:
       """
     g_algo = GraphAlgo()
-    file = 'src/data/A5.json'
+    file = 'src/data/A1.json'
     g_algo.load_from_json(file)
+    g_algo.plot_graph()
     g_algo.get_graph().remove_edge(13, 14)
     g_algo.save_to_json(file + "_edited")
     dist, path = g_algo.shortest_path(1, 7)
@@ -107,19 +109,21 @@ def check3():
     print(g_algo.TSP([1, 2, 4]))
     # g_algo.plot_graph()
 
+
 def ch():
     g = DiGraph()
-    g.add_node(5)
+    g.add_node(1)
     g.add_node(2)
     g.add_node(3)
     g.add_node(4)
-    g.add_edge(5, 2, 6)
-    g.add_edge(2, 3, 7)
-    g.add_edge(5, 4, 7)
-    g.add_edge(4, 3, 2)
+    g.add_edge(1, 2, 2)
+    g.add_edge(1, 3, 5)
+    g.add_edge(1, 4, 2)
+    g.add_edge(4, 3, 0.5)
     g_algo = GraphAlgo(g)
-    print(g_algo.shortest_path(5,3))
+    print(g_algo.shortest_path(1, 3))
     print(g_algo.centerPoint())
 
+
 if __name__ == '__main__':
-    ch()
+    check()
