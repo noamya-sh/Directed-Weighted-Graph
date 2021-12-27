@@ -1,17 +1,16 @@
-import math
+# import math
 import time
+
 from queue import PriorityQueue
-
+from heapq import heappop, heappush
 from heapdict import heapdict
-
-
 from typing import List
 from DiGraph import DiGraph
 from GraphAlgoInterface import GraphAlgoInterface
 from GraphInterface import GraphInterface
 from Node import Node
 import json
-
+from itertools import count
 from gui import *
 
 
@@ -112,12 +111,13 @@ class GraphAlgo(GraphAlgoInterface):
         dist = {i.get_id(): math.inf for i in self._graph.get_all_v().values()}
         vis = {i.get_id(): False for i in self._graph.get_all_v().values()}
         dist[src] = 0
-        # queue = [self._graph.get_dicNodes().get(src)]
-        pq = PriorityQueue()
-        pq.put((0, self._graph.get_dicNodes().get(src)))
-        while not pq.empty():
-            d, v = pq.get()
+        heap = []
+        c = count()
+        heappush(heap, (0, next(c), self._graph.get_dicNodes().get(src)))
+        while heap:
+            dis, _, v = heappop(heap)
             vis[v.get_id()] = True
+
             if dest is not None and v.get_id() == dest:
                 d = dist[v.get_id()]
                 path = []
@@ -135,9 +135,7 @@ class GraphAlgo(GraphAlgoInterface):
                 if alt < dist[i]:
                     dist[i] = alt
                     prev[i] = v
-                    pq.put((alt, self._graph.get_dicNodes().get(i)))
-                    # queue.append(self._graph.get_dicNodes().get(i))
-                    # queue.sort(key=lambda x: dist[x.get_id()])
+                    heappush(heap, (alt, next(c), self._graph.get_dicNodes().get(i)))
 
         if dest is None:
             return dist, prev
