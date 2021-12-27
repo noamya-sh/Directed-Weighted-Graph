@@ -1,7 +1,10 @@
 import math
+import time
 from queue import PriorityQueue
 
-from gui import *
+from heapdict import heapdict
+
+
 from typing import List
 from DiGraph import DiGraph
 from GraphAlgoInterface import GraphAlgoInterface
@@ -9,10 +12,15 @@ from GraphInterface import GraphInterface
 from Node import Node
 import json
 
+from gui import *
+
 
 class GraphAlgo(GraphAlgoInterface):
     def __init__(self, graph: GraphInterface = None):
-        self._graph = graph
+        if graph is None:
+            self._graph = DiGraph()
+        else:
+            self._graph = graph
 
     def get_graph(self) -> GraphInterface:
         return self._graph
@@ -99,9 +107,46 @@ class GraphAlgo(GraphAlgoInterface):
                 queueReverse.append(node_id)
         return all(v == True for v in test.values()) and all(v == True for v in test2.values())
 
+    def _dijkstra(self, src: int, dest: int = None):
+        prev = {i.get_id(): None for i in self._graph.get_all_v().values()}
+        dist = {i.get_id(): math.inf for i in self._graph.get_all_v().values()}
+        vis = {i.get_id(): False for i in self._graph.get_all_v().values()}
+        dist[src] = 0
+        # queue = [self._graph.get_dicNodes().get(src)]
+        pq = PriorityQueue()
+        pq.put((0, self._graph.get_dicNodes().get(src)))
+        while not pq.empty():
+            d, v = pq.get()
+            vis[v.get_id()] = True
+            if dest is not None and v.get_id() == dest:
+                d = dist[v.get_id()]
+                path = []
+                if prev[v.get_id()] is not None or v.get_id() == src:
+                    while prev[v.get_id()] is not None:
+                        path.insert(0, v.get_id())
+                        v = prev[v.get_id()]
+                path.insert(0, src)
+                return d, path
+
+            for i, w in v:
+                if vis[i]:
+                    continue
+                alt = dist[v.get_id()] + w
+                if alt < dist[i]:
+                    dist[i] = alt
+                    prev[i] = v
+                    pq.put((alt, self._graph.get_dicNodes().get(i)))
+                    # queue.append(self._graph.get_dicNodes().get(i))
+                    # queue.sort(key=lambda x: dist[x.get_id()])
+
+        if dest is None:
+            return dist, prev
+
+        return math.inf, []
+
     def centerPoint(self) -> (int, float):
         if not self._isConnected():
-            return -1, math.inf
+            return None, math.inf
         minMax = math.inf
         ans = None
         for v in self._graph.get_all_v().values():
@@ -114,38 +159,6 @@ class GraphAlgo(GraphAlgoInterface):
 
     def plot_graph(self) -> None:
         gui(self)
-
-    def _dijkstra(self, src: int, dest: int = None):
-        prev = {i.get_id(): None for i in self._graph.get_all_v().values()}
-        dist = {i.get_id(): math.inf for i in self._graph.get_all_v().values()}
-        dist[src] = 0
-        queue = [self._graph.get_dicNodes().get(src)]
-        while queue:
-            v = queue[0]
-            queue.remove(v)
-
-            if dest is not None and v.get_id() == dest:
-                d = dist[v.get_id()]
-                path = []
-                if prev[v.get_id()] is not None or v.get_id() == src:
-                    while prev[v.get_id()] is not None:
-                        path.insert(0, v.get_id())
-                        v = prev[v.get_id()]
-                path.insert(0, src)
-                return d, path
-
-            for i, w in v:
-                alt = dist[v.get_id()] + w
-                if alt < dist[i]:
-                    dist[i] = alt
-                    prev[i] = v
-                    queue.append(self._graph.get_dicNodes().get(i))
-                    queue.sort(key=lambda x: dist[x.get_id()])
-
-        if dest is None:
-            return dist, prev
-
-        return math.inf, []
 
 
 if __name__ == '__main__':
