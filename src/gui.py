@@ -24,25 +24,25 @@ class gui:
         self.SP = None
         self.TSP = None
         clock = pg.time.Clock()
+
         center = Button('Center', (70, 20))
         center.add_click_listener(lambda: self.setCenter(self.graphAlgo.centerPoint()[0]))
         load = Button('Load', (70, 20))
-        load.add_click_listener(lambda: self.loadnewGraph())
+        load.add_click_listener(self.loadnewGraph)
         short = Button('ShortPath', (70, 20))
-        short.add_click_listener(lambda: self.selectShortPath())
+        short.add_click_listener(self.selectShortPath)
         tsp = Button('TSP', (70, 20))
         tsp.add_click_listener(lambda: self.selectTSP())
-        algo = SubMenuItem('Show', (70, 20), [center, short, tsp], color=Color(152, 122, 19))
-        menu = MenuItem('Menu', (70, 20), [algo, load], Color(98, 140, 30))
+
+        algo = SubMenuItem('Show', (70, 20), [center, short, tsp], color=Color(51, 0, 25))
+        menu = MenuItem('Menu', (70, 20), [algo, load], Color(51, 0, 25))
         m = MenuBar([menu])
+        pg.init()
+
+        pg.font.init()
+        FONT = pg.font.SysFont('Arial', 20, bold=True)
         while True:
-            pg.init()
 
-            pg.font.init()
-            # time_delta = clock.tick(60)
-            FONT = pg.font.SysFont('Arial', 20, bold=True)
-
-            # refresh screen
             self.screen.fill(Color("#513506"))
 
             graph = self.graphAlgo.get_graph()
@@ -128,7 +128,6 @@ class gui:
             return
         self.GC = id
 
-
     def drawCenter(self):
         if self.GC is not None:
             node = self.graphAlgo.get_graph().get_dicNodes()[self.GC]
@@ -176,11 +175,10 @@ class gui:
         filrChooser.withdraw()
         file = askopenfilename(filetypes=[("json", "*.json")])
         try:
-
-            newGraph = GraphAlgo()
-            newGraph.load_from_json(file)
-            self.graphAlgo = newGraph
-
+            # self.graphAlgo = GraphAlgo()
+            self.graphAlgo.load_from_json(file)
+            print(self.graphAlgo.get_graph())
+            filrChooser.destroy()
         except:
             return
 
@@ -188,7 +186,7 @@ class gui:
         self.update()
         window = tk.Tk()
         window.title('Select')
-        window.geometry('350x150')
+        window.geometry('350x120')
         # label
         ttk.Label(window, text="Add Node :", font=("Candara", 10)).grid(column=0, row=5, padx=10, pady=10)
 
@@ -272,20 +270,19 @@ class gui:
             if src.get() == "" or dest.get() == "":
                 return
             dis, path = self.graphAlgo.shortest_path(int(src.get()), int(dest.get()))
-            print(dis,path)
-            self.SP = path
+
             window.destroy()
+            print(dis, path)
+            self.SP = path
 
         g = tk.StringVar()
         dest = ttk.Combobox(window, width=10, textvariable=g)
         dest['values'] = [i for i in self.graphAlgo.get_graph().get_all_v().keys()]
         dest.grid(column=2, row=8, pady=(10, 2), padx=(20, 0))
 
-
         b = tk.Button(window, text="Find", bg='yellow', command=checkcmbo)
         b.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
-
 
     def update(self):
         self.SP = None
@@ -299,6 +296,7 @@ def scale(data, min_screen, max_screen, min_data, max_data):
     relative to min and max screen dimensions
     """
     return ((data - min_data) / (max_data - min_data)) * (max_screen - min_screen) + min_screen
+
 
 radius = 15
 
@@ -329,4 +327,3 @@ def arrow(screen, tricolor, start, end, trirad):
                                         end[1] + trirad * math.cos(rotation - 120 * rad)),
                                        (end[0] + trirad * math.sin(rotation + 120 * rad),
                                         end[1] + trirad * math.cos(rotation + 120 * rad))))
-

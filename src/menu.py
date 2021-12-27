@@ -1,14 +1,16 @@
 import pygame as pg
-from pygame import Rect,font,Surface,Color
+from pygame import Rect, font, Surface, Color
 
 font.init()
 arial_font = font.SysFont('Candara', 15, bold=True)
+
+
 class Button:
     """
     simple button, base for everything
     """
 
-    def __init__(self, title: str, size: tuple[int, int], color=Color(155, 230, 250)) -> None:
+    def __init__(self, title: str, size: tuple[int, int], color=Color(51, 0, 25)) -> None:
         self.title = title
         self.size = size
         self.color = color
@@ -21,7 +23,7 @@ class Button:
         self.on_click.append(func)
 
     def render(self, surface: Surface, pos):
-        if(not self.show):
+        if (not self.show):
             return
         self.rect.topleft = pos
 
@@ -46,7 +48,7 @@ class MenuItem(Button):
     drop down to bottom side
     """
 
-    def __init__(self, title: str, size, buttons: list[Button], color=Color(155, 230, 250)) -> None:
+    def __init__(self, title: str, size, buttons: list[Button], color=Color(51, 0, 25)) -> None:
         super().__init__(title, size, color=color)
         max_w = max(buttons, key=lambda b: b.rect.width).rect.width
         sum_h = sum(b.rect.height for b in buttons)
@@ -57,6 +59,7 @@ class MenuItem(Button):
 
         def toggle_menu():
             self.show_menu = not self.show_menu
+
         self.add_click_listener(toggle_menu)
 
     def check(self):
