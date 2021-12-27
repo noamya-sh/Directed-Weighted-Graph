@@ -1,14 +1,17 @@
 import random
 
+"""This class represent vertical of graph"""
+
+
 class Node:
+    """Each Node contain self location, all out edges and all enter edges"""
     def __init__(self, id: int, pos: str = None):
         self._id = id
         if pos is not None:
             x, y, z = pos.split(",")
             self._pos = (float(x), float(y), float(z))
         else:
-            self._pos = (random.uniform(0, 5),random.uniform(0, 5),0)
-            #self._pos = location(pos)  # location(pos)
+            self._pos = (random.uniform(0, 5), random.uniform(0, 5), 0)
         self._out = {}
         self._enter = {}
 
@@ -24,6 +27,7 @@ class Node:
     def get_enter(self):
         return self._enter
 
+    """Function for cast to json"""
     def asdict(self):
         return {"pos": ",".join([str(v) for v in self._pos]), "id": self._id}
 
@@ -31,4 +35,4 @@ class Node:
         return self._out.items().__iter__()
 
     def __repr__(self):
-        return str(self._id)+": |edges out| "+str(len(self._out))+" |edges in| "+str(len(self._enter))
+        return str(self._id) + ": |edges out| " + str(len(self._out)) + " |edges in| " + str(len(self._enter))

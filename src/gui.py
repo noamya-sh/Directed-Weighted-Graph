@@ -1,6 +1,7 @@
 import math
 from tkinter import ttk, Button
-from tkinter.filedialog import askopenfilename
+from tkinter.filedialog import askopenfilename, asksaveasfilename
+from tkinter import messagebox as mb
 
 import pygame as pg
 from pygame import Color, display, gfxdraw, Rect, Surface, font, MOUSEBUTTONDOWN
@@ -12,7 +13,7 @@ import numpy as np
 from menu import *
 import tkinter as tk
 # init pg
-from src.GraphAlgo import GraphAlgo
+
 
 
 class gui:
@@ -29,18 +30,20 @@ class gui:
         center.add_click_listener(lambda: self.setCenter(self.graphAlgo.centerPoint()[0]))
         load = Button('Load', (70, 20))
         load.add_click_listener(self.loadnewGraph)
+        save = Button('Save', (70, 20))
+        save.add_click_listener(self.savegraph)
         short = Button('ShortPath', (70, 20))
         short.add_click_listener(self.selectShortPath)
         tsp = Button('TSP', (70, 20))
         tsp.add_click_listener(lambda: self.selectTSP())
-
+        file = SubMenuItem('File', (70, 20), [load, save], color=Color(51, 0, 25))
         algo = SubMenuItem('Show', (70, 20), [center, short, tsp], color=Color(51, 0, 25))
-        menu = MenuItem('Menu', (70, 20), [algo, load], Color(51, 0, 25))
+        menu = MenuItem('Menu', (70, 20), [file,algo], Color(51, 0, 25))
         m = MenuBar([menu])
         pg.init()
 
         pg.font.init()
-        FONT = pg.font.SysFont('Arial', 20, bold=True)
+
         while True:
 
             self.screen.fill(Color("#513506"))
@@ -124,7 +127,8 @@ class gui:
 
     def setCenter(self, id=None):
         self.update()
-        if id == -1 or id is None:
+        if id is None:
+            mb.showerror("ERROR", "The Graph is not connected")
             return
         self.GC = id
 
@@ -134,7 +138,7 @@ class gui:
             x = self.my_scale(node.get_pos()[0], x=True)
             y = self.my_scale(node.get_pos()[1], y=True)
             gfxdraw.filled_circle(self.screen, int(x), int(y),
-                                  radius, Color(250, 143, 0))
+                                  radius, Color('#A62360'))
             gfxdraw.aacircle(self.screen, int(x), int(y),
                              radius, Color(255, 255, 255))
             FONT = pg.font.SysFont('Candara', 20, bold=True)
@@ -171,14 +175,23 @@ class gui:
 
     def loadnewGraph(self):
         self.update()
-        filrChooser = tk.Tk()
-        filrChooser.withdraw()
+        fileChooser = tk.Tk()
+        fileChooser.withdraw()
         file = askopenfilename(filetypes=[("json", "*.json")])
         try:
             # self.graphAlgo = GraphAlgo()
             self.graphAlgo.load_from_json(file)
-            print(self.graphAlgo.get_graph())
-            filrChooser.destroy()
+            fileChooser.destroy()
+        except:
+            return
+
+    def savegraph(self):
+        fileChooser = tk.Tk()
+        fileChooser.withdraw()
+        file = asksaveasfilename(filetypes=[("json", "*.json")])
+        try:
+            self.graphAlgo.save_to_json(file)
+            fileChooser.destroy()
         except:
             return
 
@@ -270,9 +283,10 @@ class gui:
             if src.get() == "" or dest.get() == "":
                 return
             dis, path = self.graphAlgo.shortest_path(int(src.get()), int(dest.get()))
-
             window.destroy()
-            print(dis, path)
+            if dis == math.inf:
+                mb.showerror("ERROR", "No path from src to dest!")
+                return
             self.SP = path
 
         g = tk.StringVar()

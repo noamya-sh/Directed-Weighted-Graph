@@ -29,8 +29,8 @@ class Button:
 
         title_srf = arial_font.render(self.title, True, Color(255, 255, 255))
         title_rect = title_srf.get_rect(center=self.rect.center)
-        pg.draw.rect(surface, Color(85, 156, 39), self.rect)
-        pg.draw.rect(surface, Color(100, 50, 20), self.rect, width=1)
+        pg.draw.rect(surface, Color(51, 0, 25), self.rect)
+        pg.draw.rect(surface, Color(255,255, 255), self.rect, width=1)
         surface.blit(title_srf, title_rect)
 
     def check(self):
@@ -39,8 +39,8 @@ class Button:
             if self.rect.collidepoint(mouse_pos):
                 clicked, _, _ = pg.mouse.get_pressed()
                 if clicked:
-                    for f in self.on_click:
-                        f()
+                    for func in self.on_click:
+                        func()
 
 
 class MenuItem(Button):
