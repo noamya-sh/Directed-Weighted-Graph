@@ -1,0 +1,101 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+interface GraphInterface{
++v_size()
++e_size()
++get_mc()
++all_in_edges_of_node()
++all_out_edges_of_node()
++add_edge()
++add_node()
++remove_edge()
++remove_node()
+}
+interface GraphInterfaceAlgo{
++get_graph()
++load_from_json()
++save_to_json()
++shortest_path()
++TSP()
++centerPoint()
++plot_graph()
+}
+class DiGraph{
++get_dicEdges()
++get_dicNodes()
++v_size()
++e_size()
++get_mc()
++all_in_edges_of_node()
++all_out_edges_of_node()
++add_edge()
++add_node()
++remove_edge()
++remove_node()
+}
+class Node{
++get_id()
++get_pos()
++get_out()
++get_enter()
++asdict()
+}
+class GraphAlgo{
++get_graph()
++load_from_json()
+-_toJson()
++save_to_json()
++shortest_path()
++TSP()
+-_dijkstra()
+-_isConnected()
++centerPoint()
++plot_graph()
+}
+class Button{
++add_click_listener()
++check()
++render()
+}
+
+class MenuBar{
++check()
++render()
+}
+class SubMenuItem{
++render()
+}
+class MenuItem{
++check()
++render()
+}
+class gui{
+-my_scale()
+-getsrcDest()
+-drawGraph()
+-drawPath()
+-drawCenter()
+-_setCenter()
+-_loadnewGraph()
+-_savegraph()
+-_selectTSP()
+-_selectShortPath()
+-_update()
+
+}
+GraphInterface <|--- DiGraph
+GraphInterfaceAlgo <|-- GraphAlgo
+DiGraph --> Node
+GraphAlgo-->DiGraph
+GraphAlgo-->gui
+gui->MenuItem
+gui->MenuBar
+gui->Button
+gui->SubMenuItem
+MenuBar->MenuItem
+MenuBar->SubMenuItem
+Button <|-- MenuItem
+MenuItem<|-- SubMenuItem
+@enduml

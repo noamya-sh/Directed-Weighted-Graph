@@ -28,7 +28,7 @@ class TestGraphAlgo(TestCase):
 
     def test_load_from_json(self):
         g = GraphAlgo()
-        g.load_from_json("./data/A1.json")
+        g.load_from_json("src/data/A1.json")
         self.assertEqual(17, g.get_graph().v_size())
 
     def test_save_to_json(self):
@@ -46,7 +46,7 @@ class TestGraphAlgo(TestCase):
         g.load_from_json('data/A0.json')
         self.assertEqual(g.shortest_path(4, 5), (1.9442789961315767, [4, 5]))
         self.assertEqual(g.shortest_path(7, 2), (6.735613078842625, [7, 6, 5, 4, 3, 2]))
-        g.load_from_json('data/A2.json')
+        g.load_from_json('src/data/A2.json')
         self.assertEqual(g.shortest_path(7, 2), (3.4260129130072627, [7, 6, 2]))
 
     def test_tsp(self):
@@ -66,8 +66,8 @@ class TestGraphAlgo(TestCase):
         n = [0, 4]
         k = [0, 2, 3, 4]
         path, dis = g.TSP(n)
-        self.assertEquals(k, path)
-        self.assertEquals(8.5, dis)
+        self.assertEqual(k, path)
+        self.assertEqual(8.5, dis)
 
     def test_center_point(self):
         g = GraphAlgo()

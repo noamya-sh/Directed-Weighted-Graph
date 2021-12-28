@@ -62,6 +62,7 @@ class DiGraph(GraphInterface):
     def remove_node(self, node_id: int) -> bool:
         if node_id not in self._dicNodes.keys():
             return False
+        # remove from all dicts contains edges linked to this node
         n = self._dicNodes[node_id]
         for i in n.get_enter().keys():
             del self._dicEdges[(i, node_id)]
@@ -77,6 +78,7 @@ class DiGraph(GraphInterface):
             return False
         n1 = self._dicNodes[node_id1]
         n2 = self._dicNodes[node_id2]
+        # remove from dic_out of src node, from dic_enter of dest node and from dicEdges.
         del n1.get_out()[node_id2]
         del n2.get_enter()[node_id1]
         del self._dicEdges[(node_id1, node_id2)]

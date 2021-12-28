@@ -13,16 +13,13 @@ import numpy as np
 from menu import *
 import tkinter as tk
 
-
-# init pg
-
-
+radius = 15
 class gui:
     """
     This class implements gui for graph display.
     """
 
-    def __init__(self, graphAlgo: GraphAlgoInterface):
+    def __init__(self, graphAlgo: GraphAlgoInterface) -> None:
         self.graphAlgo = graphAlgo
         WIDTH, HEIGHT = 1080, 720
         self.screen = display.set_mode((WIDTH, HEIGHT), depth=32, flags=RESIZABLE)
@@ -33,15 +30,15 @@ class gui:
 
         # Create buttons for menu
         center = Button('Center', (70, 20))
-        center.add_click_listener(lambda: self.setCenter(self.graphAlgo.centerPoint()[0]))
+        center.add_click_listener(lambda: self._setCenter(self.graphAlgo.centerPoint()[0]))
         load = Button('Load', (70, 20))
-        load.add_click_listener(self.loadnewGraph)
+        load.add_click_listener(self._loadnewGraph)
         save = Button('Save', (70, 20))
-        save.add_click_listener(self.savegraph)
+        save.add_click_listener(self._savegraph)
         short = Button('ShortPath', (70, 20))
-        short.add_click_listener(self.selectShortPath)
+        short.add_click_listener(self._selectShortPath)
         tsp = Button('TSP', (70, 20))
-        tsp.add_click_listener(lambda: self.selectTSP())
+        tsp.add_click_listener(lambda: self._selectTSP())
         file = SubMenuItem('File', (70, 20), [load, save], color=Color(51, 0, 25))
         algo = SubMenuItem('Show', (70, 20), [center, short, tsp], color=Color(51, 0, 25))
         menu = MenuItem('Menu', (70, 20), [file, algo], Color(51, 0, 25))
@@ -59,8 +56,8 @@ class gui:
             self.min_y = min(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[1]).get_pos()[1]
             self.max_x = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[0]).get_pos()[0]
             self.max_y = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[1]).get_pos()[1]
-            self.drawGraph()
-            self.drawCenter()
+            self._drawGraph()
+            self._drawCenter()
 
             # check events
             for event in pg.event.get():
@@ -75,46 +72,49 @@ class gui:
             display.update()
             clock.tick(60)
 
-    def my_scale(self, data, x=False, y=False):
+    def _my_scale(self, data, x=False, y=False) -> float:
+        """scale point by this screen"""
         if x:
             return scale(data, 50, self.screen.get_width() - 50, self.min_x, self.max_x)
         if y:
             return scale(data, 50, self.screen.get_height() - 50, self.min_y, self.max_y)
 
-    def getsrcDest(self, edge: tuple) -> tuple:
+    def _getsrcDest(self, edge: tuple) -> tuple:
+        """to get src and dest points for edge"""
         graph = self.graphAlgo.get_graph()
         src = next(n for n in graph.get_dicNodes().values() if n.get_id() == edge[0])
         dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == edge[1])
 
         # scaled positions
-        src_x = self.my_scale(src.get_pos()[0], x=True)
-        src_y = self.my_scale(src.get_pos()[1], y=True)
-        dest_x = self.my_scale(dest.get_pos()[0], x=True)
-        dest_y = self.my_scale(dest.get_pos()[1], y=True)
+        src_x = self._my_scale(src.get_pos()[0], x=True)
+        src_y = self._my_scale(src.get_pos()[1], y=True)
+        dest_x = self._my_scale(dest.get_pos()[0], x=True)
+        dest_y = self._my_scale(dest.get_pos()[1], y=True)
         return src_x, src_y, dest_x, dest_y
 
-    def drawGraph(self):
+    def _drawGraph(self) -> None:
+        """draw all nodes and edges"""
         graph = self.graphAlgo.get_graph()
         for k in graph.get_dicEdges().keys():
-            src_x, src_y, dest_x, dest_y = self.getsrcDest(k)
+            src_x, src_y, dest_x, dest_y = self._getsrcDest(k)
             # draw the line
             p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             line(self.screen, Color("#2B1B01"), (src_x, src_y), p)
 
         for k in graph.get_dicEdges().keys():
             # find the edge nodes
-            src_x, src_y, dest_x, dest_y = self.getsrcDest(k)
+            src_x, src_y, dest_x, dest_y = self._getsrcDest(k)
             # draw the arrow triangle
             p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             arrow(self.screen, Color("#003300"), (src_x, src_y), p, 10)
 
         FONT = pg.font.SysFont('Candara', 20, bold=True)
-        self.drawPath(self.SP)
-        self.drawPath(self.TSP)
+        self._drawPath(self.SP)
+        self._drawPath(self.TSP)
         # draw nodes
         for n in graph.get_dicNodes().values():
-            x = self.my_scale(n.get_pos()[0], x=True)
-            y = self.my_scale(n.get_pos()[1], y=True)
+            x = self._my_scale(n.get_pos()[0], x=True)
+            y = self._my_scale(n.get_pos()[1], y=True)
             gfxdraw.filled_circle(self.screen, int(x), int(y), radius, Color(176, 143, 35))
             gfxdraw.aacircle(self.screen, int(x), int(y), radius, Color(255, 255, 255))
 
@@ -123,18 +123,19 @@ class gui:
             rect = id_srf.get_rect(center=(x, y))
             self.screen.blit(id_srf, rect)
 
-    def setCenter(self, id=None):
-        self.update()
+    def _setCenter(self, id=None) -> None:
+        self._update()
         if id is None:
             mb.showerror("ERROR", "The Graph is not connected")
             return
         self.GC = id
 
-    def drawCenter(self):
+    def _drawCenter(self) -> None:
+        """to draw center point of graph"""
         if self.GC is not None:
             node = self.graphAlgo.get_graph().get_dicNodes()[self.GC]
-            x = self.my_scale(node.get_pos()[0], x=True)
-            y = self.my_scale(node.get_pos()[1], y=True)
+            x = self._my_scale(node.get_pos()[0], x=True)
+            y = self._my_scale(node.get_pos()[1], y=True)
             gfxdraw.filled_circle(self.screen, int(x), int(y),
                                   radius, Color('#A62360'))
             gfxdraw.aacircle(self.screen, int(x), int(y),
@@ -147,25 +148,26 @@ class gui:
             rect = id_srf.get_rect(center=(x, y))
             self.screen.blit(id_srf, rect)
 
-    def drawPath(self, path):
+    def _drawPath(self, path) -> None:
+        """to draw TSP path/shortestPath"""
         if path is None:
             return
-        graph = self.graphAlgo.get_graph()
         i = 0
         l = len(path)
         while i + 1 < l:
             p1 = path[i]
             p2 = path[i + 1]
             # find the edge nodes
-            src_x, src_y, dest_x, dest_y = self.getsrcDest((p1, p2))
+            src_x, src_y, dest_x, dest_y = self._getsrcDest((p1, p2))
             # draw the line
             p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             line(self.screen, Color("#1A8742"), (src_x, src_y), p)
             arrow(self.screen, Color("#2C037D"), (src_x, src_y), p, 10)
             i += 1
 
-    def loadnewGraph(self):
-        self.update()
+    def _loadnewGraph(self)->None:
+        """open window to load graph"""
+        self._update()
         fileChooser = tk.Tk()
         fileChooser.withdraw()
         file = askopenfilename(filetypes=[("json", "*.json")])
@@ -176,7 +178,8 @@ class gui:
         except:
             return
 
-    def savegraph(self):
+    def _savegraph(self)->None:
+        """open window to save this graph"""
         fileChooser = tk.Tk()
         fileChooser.withdraw()
         file = asksaveasfilename(filetypes=[("json", "*.json")])
@@ -186,8 +189,9 @@ class gui:
         except:
             return
 
-    def selectTSP(self):
-        self.update()
+    def _selectTSP(self)->None:
+        """open dialog window to ask TSP"""
+        self._update()
         window = tk.Tk()
         window.title('Select')
         window.geometry('350x120')
@@ -243,16 +247,16 @@ class gui:
             path, dis = self.graphAlgo.TSP(cur)
             self.TSP = path
             window.destroy()
-            self.drawPath(self.SP)
+            self._drawPath(self.SP)
 
         find = tk.Button(window, text="Find", bg='yellow', command=find)
         find.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
         return
 
-    def selectShortPath(self):
+    def _selectShortPath(self)->None:
         # Creating tkinter window
-        self.update()
+        self._update()
         window = tk.Tk()
         window.title('Find short path')
         window.geometry('250x150')
@@ -288,7 +292,7 @@ class gui:
         but.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
 
-    def update(self):
+    def _update(self)->None:
         """
         update for delete temp draw
         """
@@ -297,7 +301,7 @@ class gui:
         self.GC = None
 
 
-def scale(data, min_screen, max_screen, min_data, max_data):
+def scale(data, min_screen, max_screen, min_data, max_data)->float:
     """
     get the scaled data with proportions min_data, max_data
     relative to min and max screen dimensions
@@ -305,31 +309,36 @@ def scale(data, min_screen, max_screen, min_data, max_data):
     return ((data - min_data) / (max_data - min_data)) * (max_screen - min_screen) + min_screen
 
 
-radius = 15
+
 
 """
 Functions for a line segment to fit the arrow triangle
 """
 
 
-def normalize(v):
+def normalize(v:tuple)->tuple:
+    """v/||v||"""
     norm = np.linalg.norm(v)
     if norm == 0:
         return v
     return v / norm
 
 
-def segment(start, end):
+def segment(start:tuple, end:tuple)->tuple:
+    """calculate segment line , use normalization"""
     v = np.subtract(end, start)
     b = tuple(normalize(v) * 20)
     return b
 
 
-def line(screen, color, start, end, thickness=4):
+def line(screen, color, start, end, thickness=4)->None:
+    """
+    to draw line (in accordance with the arrow triangle)
+    """
     pg.draw.line(screen, color, start, np.subtract(end, tuple(normalize(np.subtract(end, start)) * 5)), thickness)
 
 
-def arrow(screen, color, start, end, trirad):
+def arrow(screen, color, start, end, trirad)->None:
     """
 
     :param screen: surface that draw about it

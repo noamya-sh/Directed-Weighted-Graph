@@ -1,7 +1,5 @@
-# import math
+import math
 import time
-
-from queue import PriorityQueue
 from heapq import heappop, heappush
 from heapdict import heapdict
 from typing import List
@@ -51,7 +49,7 @@ class GraphAlgo(GraphAlgoInterface):
             return True
         return False
 
-    def _toJson(self, object):
+    def _toJson(self, object) -> dict:
         """
         cast each object from graph to pattern that fit him.
         :param object: object from graph.

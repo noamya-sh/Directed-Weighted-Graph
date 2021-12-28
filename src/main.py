@@ -1,6 +1,7 @@
 from DiGraph import DiGraph
 from GraphAlgo import GraphAlgo
 
+"""File to test our code."""
 
 def check():
     """
