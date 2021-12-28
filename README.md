@@ -16,13 +16,17 @@ There are also classes tests in the `test` folder.
 ### Run GUI
 
 
+
+
 To run the GUI, open `cmd` in directory of Ex3.py and run the command:<br>
 ```
 python Ex3.py <json file path>
 ```
 
 Alternatively, create a `GraphAlgo` object, use the `load_from_json` function and then the `plot_graph` command. You can also load another graph and save it.
-![צילום מסך 2021-12-21 094604](https://user-images.githubusercontent.com/77248387/147590521-8d0bf4d3-88a3-464a-a8c1-1f5bc815affa.png)
+
+https://user-images.githubusercontent.com/77248387/147603233-8337d15f-0ca3-4e75-a2a4-3b64ecad7f28.mp4
+
 By using Menu you can draw in the center point graph, and ask for the shortest path and solution to TSP.<br>
 *Examples of windows that open when you press menu buttons:*<br>
 ![image](https://user-images.githubusercontent.com/77248387/147590823-77195a7e-e320-4bde-9cfe-8d42fce641e3.png)
