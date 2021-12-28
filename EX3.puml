@@ -85,10 +85,10 @@ class gui{
 -_update()
 
 }
-GraphInterface <|--- DiGraph
-GraphInterfaceAlgo <|-- GraphAlgo
+GraphInterface <|- DiGraph
+GraphInterfaceAlgo <|- GraphAlgo
 DiGraph --> Node
-GraphAlgo-->DiGraph
+GraphAlgo->DiGraph
 GraphAlgo-->gui
 gui->MenuItem
 gui->MenuBar
@@ -96,6 +96,6 @@ gui->Button
 gui->SubMenuItem
 MenuBar->MenuItem
 MenuBar->SubMenuItem
-Button <|-- MenuItem
-MenuItem<|-- SubMenuItem
+Button <|- MenuItem
+MenuItem<|- SubMenuItem
 @enduml
