@@ -18,7 +18,7 @@ There are also classes tests in the `test` folder.
 
 
 
-To run the GUI, open `cmd` in directory of Ex3.py and run the command:<br>
+To run the GUI, open `cmd` in directory of [Ex3.py](https://github.com/noamya-sh/Ex3/blob/master/src/Ex3.py) and run the command:<br>
 ```
 python Ex3.py <json file path>
 ```
