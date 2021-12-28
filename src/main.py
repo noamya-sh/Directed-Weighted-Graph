@@ -3,6 +3,7 @@ from GraphAlgo import GraphAlgo
 
 """File to test our code."""
 
+
 def check():
     """
     Graph: |V|=4, |E|=5
