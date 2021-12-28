@@ -4,6 +4,7 @@ from pygame import Rect, font, Surface, Color
 font.init()
 arial_font = font.SysFont('Candara', 15, bold=True)
 
+"""this file contain classes for draw menu"""
 
 class Button:
     """

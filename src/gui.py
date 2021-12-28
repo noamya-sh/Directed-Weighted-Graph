@@ -12,11 +12,16 @@ from GraphAlgo import *
 import numpy as np
 from menu import *
 import tkinter as tk
+
+
 # init pg
 
 
-
 class gui:
+    """
+    This class implements gui for graph display.
+    """
+
     def __init__(self, graphAlgo: GraphAlgoInterface):
         self.graphAlgo = graphAlgo
         WIDTH, HEIGHT = 1080, 720
@@ -26,6 +31,7 @@ class gui:
         self.TSP = None
         clock = pg.time.Clock()
 
+        # Create buttons for menu
         center = Button('Center', (70, 20))
         center.add_click_listener(lambda: self.setCenter(self.graphAlgo.centerPoint()[0]))
         load = Button('Load', (70, 20))
@@ -38,14 +44,13 @@ class gui:
         tsp.add_click_listener(lambda: self.selectTSP())
         file = SubMenuItem('File', (70, 20), [load, save], color=Color(51, 0, 25))
         algo = SubMenuItem('Show', (70, 20), [center, short, tsp], color=Color(51, 0, 25))
-        menu = MenuItem('Menu', (70, 20), [file,algo], Color(51, 0, 25))
+        menu = MenuItem('Menu', (70, 20), [file, algo], Color(51, 0, 25))
         m = MenuBar([menu])
-        pg.init()
 
+        pg.init()
         pg.font.init()
 
         while True:
-
             self.screen.fill(Color("#513506"))
 
             graph = self.graphAlgo.get_graph()
@@ -56,8 +61,6 @@ class gui:
             self.max_y = max(list(graph.get_dicNodes().values()), key=lambda n: n.get_pos()[1]).get_pos()[1]
             self.drawGraph()
             self.drawCenter()
-            # self.drawShortPath()
-            # draw edges
 
             # check events
             for event in pg.event.get():
@@ -67,7 +70,7 @@ class gui:
                 elif event.type == MOUSEBUTTONDOWN:
                     # check menubar clicks
                     m.check()
-            # refresh rate
+            # refresh screen and menu
             m.render(self.screen, (0, 0))
             display.update()
             clock.tick(60)
@@ -78,38 +81,33 @@ class gui:
         if y:
             return scale(data, 50, self.screen.get_height() - 50, self.min_y, self.max_y)
 
+    def getsrcDest(self, edge: tuple) -> tuple:
+        graph = self.graphAlgo.get_graph()
+        src = next(n for n in graph.get_dicNodes().values() if n.get_id() == edge[0])
+        dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == edge[1])
+
+        # scaled positions
+        src_x = self.my_scale(src.get_pos()[0], x=True)
+        src_y = self.my_scale(src.get_pos()[1], y=True)
+        dest_x = self.my_scale(dest.get_pos()[0], x=True)
+        dest_y = self.my_scale(dest.get_pos()[1], y=True)
+        return src_x, src_y, dest_x, dest_y
+
     def drawGraph(self):
         graph = self.graphAlgo.get_graph()
         for k in graph.get_dicEdges().keys():
-            # find the edge nodes
-            src = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[0])
-            dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[1])
-
-            # scaled positions
-            src_x = self.my_scale(src.get_pos()[0], x=True)
-            src_y = self.my_scale(src.get_pos()[1], y=True)
-            dest_x = self.my_scale(dest.get_pos()[0], x=True)
-            dest_y = self.my_scale(dest.get_pos()[1], y=True)
-
+            src_x, src_y, dest_x, dest_y = self.getsrcDest(k)
             # draw the line
-            p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
+            p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             line(self.screen, Color("#2B1B01"), (src_x, src_y), p)
-            # pg.draw.line(screen, Color(153, 153, 0),
-            #                  (src_x, src_y), (dest_x, dest_y), width=4)
+
         for k in graph.get_dicEdges().keys():
             # find the edge nodes
-            src = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[0])
-            dest = next(n for n in graph.get_dicNodes().values() if n.get_id() == k[1])
-
-            # scaled positions
-            src_x = self.my_scale(src.get_pos()[0], x=True)
-            src_y = self.my_scale(src.get_pos()[1], y=True)
-            dest_x = self.my_scale(dest.get_pos()[0], x=True)
-            dest_y = self.my_scale(dest.get_pos()[1], y=True)
-
-            # draw the line
-            p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
+            src_x, src_y, dest_x, dest_y = self.getsrcDest(k)
+            # draw the arrow triangle
+            p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             arrow(self.screen, Color("#003300"), (src_x, src_y), p, 10)
+
         FONT = pg.font.SysFont('Candara', 20, bold=True)
         self.drawPath(self.SP)
         self.drawPath(self.TSP)
@@ -159,16 +157,9 @@ class gui:
             p1 = path[i]
             p2 = path[i + 1]
             # find the edge nodes
-            src = graph.get_dicNodes()[p1]
-            dest = graph.get_dicNodes()[p2]
-
-            # scaled positions
-            src_x = self.my_scale(src.get_pos()[0], x=True)
-            src_y = self.my_scale(src.get_pos()[1], y=True)
-            dest_x = self.my_scale(dest.get_pos()[0], x=True)
-            dest_y = self.my_scale(dest.get_pos()[1], y=True)
+            src_x, src_y, dest_x, dest_y = self.getsrcDest((p1, p2))
             # draw the line
-            p = np.subtract((dest_x, dest_y), yashar((src_x, src_y), (dest_x, dest_y)))
+            p = np.subtract((dest_x, dest_y), segment((src_x, src_y), (dest_x, dest_y)))
             line(self.screen, Color("#1A8742"), (src_x, src_y), p)
             arrow(self.screen, Color("#2C037D"), (src_x, src_y), p, 10)
             i += 1
@@ -248,14 +239,13 @@ class gui:
         rem = tk.Button(window, text="Remove", bg='yellow', command=remove)
         rem.grid(column=5, row=8, pady=(10, 2), padx=(20, 0))
 
-        def checkcmbo():
-
+        def find():
             path, dis = self.graphAlgo.TSP(cur)
             self.TSP = path
             window.destroy()
             self.drawPath(self.SP)
 
-        find = tk.Button(window, text="Find", bg='yellow', command=checkcmbo)
+        find = tk.Button(window, text="Find", bg='yellow', command=find)
         find.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
         return
@@ -264,7 +254,7 @@ class gui:
         # Creating tkinter window
         self.update()
         window = tk.Tk()
-        window.title('Select')
+        window.title('Find short path')
         window.geometry('250x150')
         # label
         ttk.Label(window, text="Select src Node :", font=("Candara", 10)).grid(column=0, row=5, padx=10, pady=10)
@@ -279,7 +269,7 @@ class gui:
         ttk.Label(window, text="Select dest Node :", font=("Candara", 10)).grid(column=0, row=8, padx=10,
                                                                                 pady=10)
 
-        def checkcmbo():
+        def find():
             if src.get() == "" or dest.get() == "":
                 return
             dis, path = self.graphAlgo.shortest_path(int(src.get()), int(dest.get()))
@@ -294,11 +284,14 @@ class gui:
         dest['values'] = [i for i in self.graphAlgo.get_graph().get_all_v().keys()]
         dest.grid(column=2, row=8, pady=(10, 2), padx=(20, 0))
 
-        b = tk.Button(window, text="Find", bg='yellow', command=checkcmbo)
-        b.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
+        but = tk.Button(window, text="Find", bg='yellow', command=find)
+        but.grid(column=2, row=10, pady=(10, 2), padx=(20, 0))
         window.mainloop()
 
     def update(self):
+        """
+        update for delete temp draw
+        """
         self.SP = None
         self.TSP = None
         self.GC = None
@@ -314,6 +307,10 @@ def scale(data, min_screen, max_screen, min_data, max_data):
 
 radius = 15
 
+"""
+Functions for a line segment to fit the arrow triangle
+"""
+
 
 def normalize(v):
     norm = np.linalg.norm(v)
@@ -322,22 +319,30 @@ def normalize(v):
     return v / norm
 
 
-def yashar(start, end):
+def segment(start, end):
     v = np.subtract(end, start)
     b = tuple(normalize(v) * 20)
     return b
 
 
-def line(screen, lcolor, start, end, thickness=4):
-    pg.draw.line(screen, lcolor, start, np.subtract(end, tuple(normalize(np.subtract(end, start)) * 5)), thickness)
+def line(screen, color, start, end, thickness=4):
+    pg.draw.line(screen, color, start, np.subtract(end, tuple(normalize(np.subtract(end, start)) * 5)), thickness)
 
 
-def arrow(screen, tricolor, start, end, trirad):
+def arrow(screen, color, start, end, trirad):
+    """
+
+    :param screen: surface that draw about it
+    :param color: color of triangle
+    :param start: src vertical of line
+    :param end: dest vertical of line
+    :param trirad: size of triangle
+    """
     rad = math.pi / 180
     rotation = (math.atan2(start[1] - end[1], end[0] - start[0])) + math.pi / 2
-    pg.draw.polygon(screen, tricolor, ((end[0] + trirad * math.sin(rotation),
-                                        end[1] + trirad * math.cos(rotation)),
-                                       (end[0] + trirad * math.sin(rotation - 120 * rad),
-                                        end[1] + trirad * math.cos(rotation - 120 * rad)),
-                                       (end[0] + trirad * math.sin(rotation + 120 * rad),
-                                        end[1] + trirad * math.cos(rotation + 120 * rad))))
+    pg.draw.polygon(screen, color, ((end[0] + trirad * math.sin(rotation),
+                                     end[1] + trirad * math.cos(rotation)),
+                                    (end[0] + trirad * math.sin(rotation - 120 * rad),
+                                     end[1] + trirad * math.cos(rotation - 120 * rad)),
+                                    (end[0] + trirad * math.sin(rotation + 120 * rad),
+                                     end[1] + trirad * math.cos(rotation + 120 * rad))))
