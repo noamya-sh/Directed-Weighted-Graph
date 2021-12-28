@@ -2,7 +2,7 @@
 #### Noamya Shani and Eitan Shenkolevski
 
 ### Abstract
-Our project is about building weighted directed graphs, executing algorithms on them and presenting them graphically (GUI).<br>
+Our project is building weighted directed graphs, executing algorithms on them and presenting them graphically (GUI).<br>
 We have created 2 central classes that implement 2 interfaces - 
 1. `DiGraph` implement `GraphInterface`.
 2. `GraphAlgo ` implement `GraphInterfaceAlgo`.<br>
