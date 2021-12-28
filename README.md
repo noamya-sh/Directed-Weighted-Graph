@@ -52,3 +52,10 @@ Comparison between this project (Python) and a previous project (Java):
 | 1000 Nodes | *Python:* 8.3 sec  <-> *Java:* 8.5 sec | *Python:* 31 ms  <-> *Java:* 8.5 sec|
 | 10000 Nodes | *Python:* 22 min 15 sec  <-> *Java:* 9 min 21 sec |*Python:* 385 ms  <-> *Java:* 156 ms |
 | 1000000 Nodes |*Python:* timeout  <-> *Java:* timeout |*Python:* 8 sec 794 ms <-> *Java:* 1 min 33 sec |
+<br>
+
+*Computer info on which the projects were tested:*
+windows 64 bit
+Intel (R) Core (TM) i5-1035G1 CPU @
+1.00GHz 1.19 GHz
+RAM 8.00 GB
